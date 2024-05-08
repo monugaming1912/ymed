@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Orders</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</head>
+<style>
+    body{
+        margin: 20px;
+        background: #FFFFFF;
+        }
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(45, 42, 42, 0.5); /* Màu nền */
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        position: fixed;
+    }
+
+    .loading-spinner {
+        border: 8px solid #f3f3f3; /* Màu nền của spinner */
+        border-top: 8px solid #3498db; /* Màu của spinner */
+        border-radius: 50%;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite; /* Tạo hiệu ứng quay */
+        transform: translate(-50%, -50%); /* Canh giữa spinner */
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    </style>
+<body>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <h1 style="margin-bottom:30px; color:#275284;">Tra cứu mã vận đơn</h1>
+    
+    <label style="color:#275284;" for="orderProperties">Mã vận đơn:</label>
+
+    <input type="text" id="orderProperties" name="orderProperties">
+    <select style="padding: 2px;" id="companySelect">
+        <option value="YMED">Công ty YMED</option>
+        <option value="HEALTHCARE">Công ty HEALTHCARE</option>
+    </select>
+
+    <button class="btn btn-primary" onclick="getOrders()">Lấy mã vận đơn</button>
+
+    <div id="orders" style="margin-top:20px;">
+        <table class="table table-bordered">
+            <thead class="table-primary text-center align-middle">
+                <th>STT</th>
+                <th>Mã vận đơn</th>
+                <th>ID trạng thái</th>
+                <th>Ngày đơn hàng</th>
+                <th>Tên khách hàng</th>
+                <th>Địa chỉ</th>
+                <th>SĐT người nhận</th>
+                <th>Tiền thu hộ</th>
+                <th>Phí vận chuyển</th>
+                <th>Phần trăm chi phí</th>
+            </thead>
+            <tbody id="orderTableBody" class="table-group-divider"></tbody>
+        </table>
+    </div>
+
+    <script>
+        
+        async function getOrders() {
+            document.getElementById("loadingOverlay").style.display = "block";
+            const companySelect = document.getElementById("companySelect");
+            const selectedCompany = companySelect.value;
+            const orderProperties = document.getElementById("orderProperties").value;
+
+            const url = "https://api.viettelpost.vn/api/supperapp/get-list-order-by-status-v2";
+            const currentDate = new Date();
+            const thirtyDaysAgo = new Date(currentDate.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+            const tokenC4 = "eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOiIwOTE3NzE2ODE5IiwiU1NPSWQiOiI3ODU5YjAxYS0wZjlhLTQzZTgtODE2ZS02YzgzODQzNDRmZTciLCJpbnRlcm5hbCI6ZmFsc2UsIlVzZXJJZCI6NTU5NTUzMCwiRnJvbVNvdXJjZSI6MywiVG9rZW4iOiIzQTI4RkMwQkZCMERCOTE0NUI1MUQwQjZBNjVCNDJFOSIsInNlc3Npb25JZCI6IkExNEJBRTMzNjkxODU0MjUwQjVERjEwMEQ3RjdCQUJEIiwiZXhwIjoxNzE1NDQ0Mzc1LCJsc3RDaGlsZHJlbiI6IiIsIlBhcnRuZXIiOjAsImRldmljZUlkIjoicXc4MWxvNHFuMmc5N3Nrb2IwNnRvdyIsInZlcnNpb24iOjF9.KR2afW2b69JIdvZ8gBA_cXsWdn18FMWg13BjRKSxjtFwbb5DR50OU5ZecqtxtjbHbOkC9HqeQduUNcV6cvL5fQ";
+            const tokenD4 = "eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOiIwOTE1NjY1NDIyIiwiU1NPSWQiOiI5ODkwOGMwZi1iNjZlLTQzMWYtYjllNy00MzA3YmM3YTA4MmQiLCJpbnRlcm5hbCI6ZmFsc2UsIlVzZXJJZCI6MTM3NzY4NDEsIkZyb21Tb3VyY2UiOjMsIlRva2VuIjoiMkVBMTY1MzEwRDdDMDQwQTYxQzhGRjIzMjFCNTgyMDUiLCJzZXNzaW9uSWQiOiJCRDdBNUJBQUVCM0E0M0U3Mzk1RDZBMjVBNkZFMEI0RiIsImV4cCI6MTcxNTQ0NDkxMSwibHN0Q2hpbGRyZW4iOiIiLCJQYXJ0bmVyIjowLCJkZXZpY2VJZCI6InNuNDk3ajRqZzlwaXV4ZnBmcXN4b3MiLCJ2ZXJzaW9uIjoxfQ.gAq2vwwgCdqFCShADHczOiVp412AtZB_eXqK_sPr4xpTcDLn598lytnJmCci4NhR_zvdk7OIp0ku_H0RAncJtA";
+
+            const payload = {
+                "PAGE_INDEX": 1,
+                "PAGE_SIZE": 30,
+                "INVENTORY": null,
+                "TYPE": 0,
+                "DATE_FROM": thirtyDaysAgo.toLocaleDateString(),
+                "DATE_TO": currentDate.toLocaleDateString(),
+                "ORDER_PROPERTIES": orderProperties,
+                "ORDER_PAYMENT": "",
+                "IS_FAST_DELIVERY": false,
+                "REASON_RETURN": null,
+                "ORDER_STATUS": "-100,-101,-102,-108,-109,-110,100,102,103,104,105,107,200,201,202,300,301,302,303,320,400,500,501,502,503,504,505,506,507,508,509,515,550,551,570",
+                "deviceId": "qw81lo4qn2g97skob06tow"
+            };
+
+            const options = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Token": selectedCompany === "YMED" ? tokenC4 : (selectedCompany === "HEALTHCARE" ? tokenD4 : null)
+                },
+                body: JSON.stringify(payload)
+            };
+
+            const response = await fetch(url, options);
+            const data = await response.json();
+            const ordersDiv = document.getElementById('orders');
+            const orders = data?.data?.data?.LIST_ORDER;
+            function getOrderStatusNumber(orderStatus) {
+                    const statusTextDict = {
+                        300: 'Đang vận chuyển',
+                        202: 'Đang vận chuyển',
+                        501: 'Giao thành công',
+                        505: 'Chờ xử lý',
+                        102: 'Tồn lấy - Giao không thành công',
+                        200: 'Đã lấy hàng',
+                        400: 'Đang vận chuyển',
+                        506: 'Chờ phát lại',
+                        500: 'Đang giao hàng',
+                        107: 'Đơn bị huỷ',
+                        102: 'Đã tiếp nhận',
+                        104: 'Đang lấy hàng'
+
+                    };
+                if (orderStatus in statusTextDict) {
+                    return statusTextDict[orderStatus];
+                } else {
+                    return 'Không xác định';
+                };
+            }
+
+            function formatDateTime(dateTimeString) {
+                const date = new Date(dateTimeString);
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const year = date.getFullYear();
+                const hours = date.getHours().toString().padStart(2, '0');
+                const minutes = date.getMinutes().toString().padStart(2, '0');
+                const seconds = date.getSeconds().toString().padStart(2, '0');
+                return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+            }
+
+            
+            
+            function formatMoney(money) {
+                return money.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+            
+            
+
+            if (orders) {
+                const rows = orders
+                    .map((order) => {
+                        // Sử dụng hàm formatMoney để định dạng số
+                        const formattedMoneyCollection = formatMoney(order.MONEY_COLLECTION);
+                        // Định dạng tổng tiền
+                        const formattedMoneyTotal = formatMoney(order.MONEY_TOTAL);
+
+                        const percentage = (order.MONEY_TOTAL / order.MONEY_COLLECTION * 100).toFixed(2); // Lấy 2 số sau dấu phẩy
+
+                        return `<tr>
+                        <td class="text-center align-middle">${order.RN}</td>
+                        <td class="text-center align-middle">${order.ORDER_NUMBER}</td>
+                        <td class="text-nowrap text-center align-middle">${getOrderStatusNumber(order.ORDER_STATUS)}</td>
+                        <td>${formatDateTime(order.ORDER_SYSTEMDATE)}</td>
+                        <td class="text-left align-middle">${order.RECEIVER_FULLNAME}</td>
+                        <td class="text-wrap">${order.RECEIVER_ADDRESS}</td>
+                        <td class="text-center align-middle">${order.RECEIVER_PHONE}</td>
+                        <td class="text-center align-middle">${formattedMoneyCollection}</td>
+                        <td class="text-center align-middle">${formattedMoneyTotal}</td>
+                        <td class="text-center align-middle">${percentage} %</td>
+                    </tr>`;
+                    })
+                    .join('');
+                document.getElementById('orderTableBody').innerHTML = rows;
+            } else {
+                ordersDiv.textContent = 'Không tìm thấy đơn hàng';
+            }
+            document.getElementById("loadingOverlay").style.display = "none";
+        }
+    </script>
+</body>
+</html>
