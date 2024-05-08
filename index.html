@@ -68,6 +68,7 @@
                 <th>Mã vận đơn</th>
                 <th>ID trạng thái</th>
                 <th>Ngày đơn hàng</th>
+                <th>Mã đơn hàng</th>
                 <th>Tên khách hàng</th>
                 <th>Địa chỉ</th>
                 <th>SĐT người nhận</th>
@@ -179,6 +180,7 @@
                         <td class="text-center align-middle">${order.ORDER_NUMBER}</td>
                         <td class="text-nowrap text-center align-middle">${getOrderStatusNumber(order.ORDER_STATUS)}</td>
                         <td>${formatDateTime(order.ORDER_SYSTEMDATE)}</td>
+                        <td class="text-wrap text-left align-middle">${order.ORDER_REFERENCE}</td>
                         <td class="text-left align-middle">${order.RECEIVER_FULLNAME}</td>
                         <td class="text-wrap">${order.RECEIVER_ADDRESS}</td>
                         <td class="text-center align-middle">${order.RECEIVER_PHONE}</td>
