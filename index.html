@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tra cứu mã vận đơn</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </head>
@@ -130,31 +131,43 @@
             const data = await response.json();
             const ordersDiv = document.getElementById('orders');
             const orders = data?.data?.data?.LIST_ORDER;
+            const errorOders = data?.data.totalElements;
             function getOrderStatusNumber(orderStatus) {
-                    const statusTextDict = {
-                        300: 'Đang vận chuyển',
-                        202: 'Đang vận chuyển',
-                        501: 'Giao thành công',
-                        505: 'Chờ xử lý',
-                        102: 'Tồn lấy - Giao không thành công',
-                        200: 'Đã lấy hàng',
-                        400: 'Đang vận chuyển',
-                        506: 'Chờ phát lại',
-                        500: 'Đang giao hàng',
-                        107: 'Đơn bị huỷ',
-                        102: 'Đã tiếp nhận',
-                        104: 'Đang lấy hàng',
-                        103: 'Đã tiếp nhận',
-                        509: 'Chờ phát lại'
-
-                    };
-                if (orderStatus in statusTextDict) {
-                    return statusTextDict[orderStatus];
-                } else {
-                    return 'Không xác định';
+                const statusStyleDict = {
+                    300: {text: 'Đang vận chuyển', color: '#FFFFFF', backgroundColor: '#FC6140', borderRadius: '25px'}, 
+                    202: {text: 'Đang vận chuyển', color: '#FFFFFF', backgroundColor: '#FC6140', borderRadius: '25px'}, 
+                    501: {text: 'Giao thành công', color: 'green', backgroundColor: 'lightgreen', borderRadius: '25px'}, 
+                    505: {text: 'Chờ xử lý', color: '#FFFFFF', backgroundColor: '#FD2C2C', borderRadius: '25px'}, 
+                    102: {text: 'Tồn lấy - Giao không thành công', color: 'red', backgroundColor: 'lightcoral', borderRadius: '25px'}, 
+                    200: {text: 'Đã lấy hàng', color: '#FFFFFF', backgroundColor: '#E0B85C', borderRadius: '25px'}, 
+                    400: {text: 'Đang vận chuyển', color: '#FFFFFF', backgroundColor: '#FC6140', borderRadius: '25px'}, 
+                    506: {text: 'Chờ phát lại', color: '#FFFFFF', backgroundColor: '#E43F99', borderRadius: '25px'}, 
+                    500: {text: 'Đang giao hàng', color: 'green', backgroundColor: 'lightgreen', borderRadius: '25px'}, 
+                    107: {text: 'Đơn bị huỷ', color: 'red', backgroundColor: 'lightcoral', borderRadius: '25px'}, 
+                    102: {text: 'Đã tiếp nhận', color: '#FFFFFF', backgroundColor: '#1773DB', borderRadius: '25px'}, 
+                    104: {text: 'Đang lấy hàng', color: '#FFFFFF', backgroundColor: '#E0B85C', borderRadius: '25px'}, 
+                    103: {text: 'Đã tiếp nhận', color: '#FFFFFF', backgroundColor: '#1773DB', borderRadius: '25px'}, 
+                    509: {text: 'Chờ phát lại', color: '#FFFFFF', backgroundColor: '#E43F99', borderRadius: '25px'}, 
                 };
+                if (orderStatus in statusStyleDict) {
+                    const statusInfo = statusStyleDict[orderStatus];
+                    const textColor = statusInfo.color;
+                    const text = statusInfo.text;
+                    const backgroundColor = statusInfo.backgroundColor;
+                    const borderRadius = statusInfo.borderRadius;
+                    const padding = '5px 9px'; // Điều chỉnh padding để background lớn hơn chữ
+                    const statusTag = `<span style="font-weight: bold; color: ${textColor}; background-color: ${backgroundColor}; border-radius: ${borderRadius}; padding: ${padding};">${text}</span>`;
+                    return statusTag;
+                } else {
+                    const defaultBackgroundColor = 'lightgray'; // Màu nền mặc định
+                    const borderRadius = '25px'; // Border radius mặc định
+                    const padding = '5px 9px'; // Padding mặc định
+                    return `<span style="font-weight: bold; color: black; background-color: ${defaultBackgroundColor}; border-radius: ${borderRadius}; padding: ${padding};">Không xác định</span>`;
+                }
             }
-
+            
+            
+            
             function formatDateTime(dateTimeString) {
                 const date = new Date(dateTimeString);
                 const day = date.getDate().toString().padStart(2, '0');
@@ -188,7 +201,7 @@
 
                         return `<tr>
                         <td class="text-center align-middle">${order.RN}</td>
-                        <td class="text-center align-middle">${order.ORDER_NUMBER}</td>
+                        <td class="text-wrap text-left align-middle">${order.ORDER_NUMBER}</td>
                         <td class="text-nowrap text-center align-middle">${getOrderStatusNumber(order.ORDER_STATUS)}</td>
                         <td class="text-nowrap text-center align-middle">${formatDateTime(order.ORDER_SYSTEMDATE)}</td>
                         <td class="text-wrap text-left align-middle">${order.ORDER_REFERENCE}</td>
@@ -203,8 +216,14 @@
                     .join('');
                 document.getElementById('orderTableBody').innerHTML = rows;
             } else {
-                ordersDiv.textContent = 'Không tìm thấy đơn hàng';
-            }
+                
+                // Hiển thị phần tử 'orders' trước khi ghi đè nội dung
+                document.getElementById("orders").style.display = "block";
+                if (errorOders === 0) {
+                    // Sử dụng textContent hoặc innerHTML để cập nhật nội dung trực quan hơn
+                    ordersDiv.innerHTML = '<p>Không tìm thấy đơn hàng</p>';
+                }
+                    }
             document.getElementById("loadingOverlay").style.display = "none";
         }
     </script>
