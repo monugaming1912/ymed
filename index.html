@@ -146,7 +146,7 @@
 
             const payload = {
                 "PAGE_INDEX": 1,
-                "PAGE_SIZE": 30,
+                "PAGE_SIZE": 50,
                 "INVENTORY": null,
                 "TYPE": 0,
                 "DATE_FROM": thirtyDaysAgo.toLocaleDateString(),
@@ -196,7 +196,7 @@
                     const backgroundColor = statusInfo.backgroundColor;
                     const borderRadius = statusInfo.borderRadius;
                     const padding = '5px 9px'; // Điều chỉnh padding để background lớn hơn chữ
-                    const statusTag = `<span style="font-weight: bold; color: ${textColor}; background-color: ${backgroundColor}; border-radius: ${borderRadius}; padding: ${padding};">${text}</span>`;
+                    const statusTag = `<span style="color: ${textColor}; background-color: ${backgroundColor}; border-radius: ${borderRadius}; padding: ${padding};">${text}</span>`;
                     return statusTag;
                 } else {
                     const defaultBackgroundColor = 'lightgray'; // Màu nền mặc định
