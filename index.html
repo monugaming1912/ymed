@@ -176,18 +176,19 @@
             const errorOders = data?.data.totalElements;
             function getOrderStatusNumber(orderStatus) {
                 const statusStyleDict = {
-                    300: {text: 'Đang vận chuyển', color: '#FFFFFF', backgroundColor: '#FC6140', borderRadius: '25px'}, 
+                    102: {text: 'Tồn lấy - Giao không thành công', color: 'red', backgroundColor: 'lightcoral', borderRadius: '25px'},
+                    103: {text: 'Đã tiếp nhận', color: '#FFFFFF', backgroundColor: '#1773DB', borderRadius: '25px'}, 
+                    104: {text: 'Đang lấy hàng', color: '#FFFFFF', backgroundColor: '#E0B85C', borderRadius: '25px'}, 
+                    107: {text: 'Đơn bị huỷ', color: 'red', backgroundColor: 'lightcoral', borderRadius: '25px'},
+                    200: {text: 'Đã lấy hàng', color: '#FFFFFF', backgroundColor: '#E0B85C', borderRadius: '25px'}, 
                     202: {text: 'Đang vận chuyển', color: '#FFFFFF', backgroundColor: '#FC6140', borderRadius: '25px'}, 
+                    300: {text: 'Đang vận chuyển', color: '#FFFFFF', backgroundColor: '#FC6140', borderRadius: '25px'}, 
+                    400: {text: 'Đang vận chuyển', color: '#FFFFFF', backgroundColor: '#FC6140', borderRadius: '25px'},
+                    500: {text: 'Đang giao hàng', color: '#FFFFFF', backgroundColor: '#07C8D1', borderRadius: '25px'},  
                     501: {text: 'Giao thành công', color: 'green', backgroundColor: 'lightgreen', borderRadius: '25px'}, 
                     505: {text: 'Chờ xử lý', color: '#FFFFFF', backgroundColor: '#FD2C2C', borderRadius: '25px'}, 
-                    102: {text: 'Tồn lấy - Giao không thành công', color: 'red', backgroundColor: 'lightcoral', borderRadius: '25px'}, 
-                    200: {text: 'Đã lấy hàng', color: '#FFFFFF', backgroundColor: '#E0B85C', borderRadius: '25px'}, 
-                    400: {text: 'Đang vận chuyển', color: '#FFFFFF', backgroundColor: '#FC6140', borderRadius: '25px'}, 
                     506: {text: 'Chờ phát lại', color: '#FFFFFF', backgroundColor: '#E43F99', borderRadius: '25px'}, 
-                    500: {text: 'Đang giao hàng', color: '#FFFFFF', backgroundColor: '#07C8D1', borderRadius: '25px'}, 
-                    107: {text: 'Đơn bị huỷ', color: 'red', backgroundColor: 'lightcoral', borderRadius: '25px'},
-                    104: {text: 'Đang lấy hàng', color: '#FFFFFF', backgroundColor: '#E0B85C', borderRadius: '25px'}, 
-                    103: {text: 'Đã tiếp nhận', color: '#FFFFFF', backgroundColor: '#1773DB', borderRadius: '25px'}, 
+		    507: {text: 'Chờ xử lý', color: '#FFFFFF', backgroundColor: '#7986FF', borderRadius: '25px'},
                     509: {text: 'Chờ phát lại', color: '#FFFFFF', backgroundColor: '#E43F99', borderRadius: '25px'},
 		    551: {text: 'Đang chuyển hoàn', color: '#FFFFFF', backgroundColor: '#7986FF', borderRadius: '25px'},
                 };
