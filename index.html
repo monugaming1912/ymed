@@ -107,7 +107,7 @@
 		<option class="option" value="YMEDHCM">Y-MED HCM</option>
 		<option class="option" value="HEALTHCAREHCM">HEALTHCARE HCM</option>
 		<option class="option" value="YMEDHN">Y-MED HN</option>
-		<option class="option" value="HEALTHCAREHCM">HEALTHCARE HN</option>
+		<option class="option" value="HEALTHCAREHN">HEALTHCARE HN</option>
 	</select>
 
 
@@ -172,6 +172,7 @@
                  	(selectedCompany === "HEALTHCAREHCM" ? tokenhealthcareHCM : 
                  	(selectedCompany === "YMEDHN" ? tokenymedHN : 
                  	(selectedCompany === "HEALTHCAREHN" ? tokenhealthcareHN : null)))
+		},
                 body: JSON.stringify(payload)
             };
 
