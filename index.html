@@ -1,123 +1,285 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Sheets Data</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            background-color: #f4f4f4;
-            display: flex;
-            flex-direction: column;
-        }
-
-        #menu {
-            height: 20px;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            margin-bottom: 10px;
-            text-align: right;
-        }
-
-        h1 {
-            margin: 0;
-            padding: 10px 20px;
-            text-align: right;
-            background-color: #fff;
-            border-bottom: 1px solid #ddd;
-            position: absolute;
-            top: 40px;
-            right: 10px;
-        }
-
-        .iframe-container {
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding-bottom: 20px; /* Cutting 20px from the bottom */
-        }
-
-        iframe {
-            border: none;
-            width: 100%;
-            height: calc(100vh - 60px - 20px); /* 60px for menu and h1, 20px for bottom cut */
-        }
-
-        @media only screen and (max-width: 600px) {
-            iframe {
-                height: calc(100vh - 40px - 20px); /* Adjust height for smaller screens */
-            }
-        }
-
-        /* Styles for the password overlay */
-        .password-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            flex-direction: column;
-        }
-
-        .password-overlay input[type="password"] {
-            padding: 10px;
-            margin: 10px 0;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-
-        .password-overlay button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            background-color: #4CAF50;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        .password-overlay button:hover {
-            background-color: #45a049;
-        }
-    </style>
+    <title>Tra cứu mã vận đơn</title>
+    <link rel="icon" type="image/x-icon" href="https://i.ibb.co/xYJwfcx/icon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
 </head>
+<style>
+	@import url('https://fonts.googleapis.com/css2?family=Gloock&family=Libre+Bodoni:ital,wght@0,400..700;1,400..700&family=Yeseva+One&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Gloock&family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Libre+Bodoni:ital,wght@0,400..700;1,400..700&family=Yeseva+One&display=swap');
+	body{
+        margin: 20px;
+        background: #FFFFFF;
+        font-family: "Inter Tight", sans-serif;
+		font-style: normal;
+        }
+	
+    #menu {
+        height: 20px;
+        position: relative;
+        margin-bottom: 10px;
+        text-align: right;
+    }
+
+
+	.label{
+		font-family: "Yeseva One", serif;
+		font-style: normal;
+	}
+	
+	#companySelect {
+		padding: 4px;
+		background-color: white; /* Background color of the select box */
+		color: black; /* Text color */
+	}
+
+	#companySelect option {
+		padding: 4px; /* Padding inside options */
+	}
+
+	.option:hover {
+		background-color: #0d6efd; /* Hover background color for the select box */
+		color: white; /* Hover text color */
+	}
+
+    .loading-overlay {
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(45, 42, 42, 0.5); /* Màu nền */
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        position: fixed;
+    }
+
+    .loading-spinner {
+        border: 8px solid #f3f3f3; /* Màu nền của spinner */
+        border-top: 8px solid #3498db; /* Màu của spinner */
+        border-radius: 50%;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite; /* Tạo hiệu ứng quay */
+        transform: translate(-50%, -50%); /* Canh giữa spinner */
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+        footer {
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: #f3f3f3; /* Màu nền của footer */
+        padding: 10px;
+        text-align: center;
+    }
+    </style>
 <body>
-    <div id="passwordOverlay" class="password-overlay">
-        <h2>Đây là mục private, vui lòng nhập mật khẩu.</h2>
-        <input type="password" id="passwordInput" placeholder="Nhập mật khẩu">
-        <button onclick="checkPassword()">Submit</button>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
     </div>
 
     <div id="menu">
-        <a href="https://monugaming1912.github.io/ymed/">Xem Viettel</a>
+        <a href="https://monugaming1912.github.io/tonkho/">Xem tồn kho</a>
     </div>
-    <div class="iframe-container">
-        <iframe src="https://docs.google.com/spreadsheets/d/1kUuCmpabio2LuIA1RNx-tLh5699o9g13lQv-jdFf6zU/edit?usp=sharing&gid=1273789&rm=minimal&single=true&widget=false&headers=false&chrome=false"></iframe>
+
+    <h1 class="label" style="margin-bottom:30px; color:#275284;">Tra cứu mã vận đơn</h1>
+    <label style="color:#275284;" for="orderProperties">Mã vận đơn:</label>
+    <input type="text" id="orderProperties" name="orderProperties" oninput="this.value = this.value.toUpperCase();">
+
+	<select id="companySelect" onblur='this.size=0;' onchange='this.size=1; this.blur();'>
+		<option class="option" value="YMEDHCM">Y-MED HCM</option>
+		<option class="option" value="HEALTHCAREHCM">HEALTHCARE HCM</option>
+		<option class="option" value="YMEDHN">Y-MED HN</option>
+		<option class="option" value="HEALTHCAREHN">HEALTHCARE HN</option>
+	</select>
+
+
+    <button class="btn btn-primary" onclick="getOrders()">Lấy mã vận đơn</button>
+
+    <div id="orders" style="margin-top:20px; display: none;">
+        <table class="table table-bordered">
+            <thead class="table-primary text-center align-middle">
+                <th>STT</th>
+                <th>Mã vận đơn</th>
+                <th>ID trạng thái</th>
+                <th>Ngày đơn hàng</th>
+                <th>Mã đơn hàng</th>
+                <th>Tên khách hàng</th>
+                <th>Địa chỉ</th>
+                <th>SĐT người nhận</th>
+                <th>Tiền thu hộ</th>
+                <th>Phí vận chuyển</th>
+                <th>Phần trăm chi phí</th>
+            </thead>
+            <tbody id="orderTableBody" class="table-group-divider"></tbody>
+        </table>
     </div>
 
     <script>
-        function checkPassword() {
-            const input = document.getElementById('passwordInput').value;
-            const overlay = document.getElementById('passwordOverlay');
-            const correctPassword = 'tonkho123';
-            if (input === correctPassword) {
-                overlay.style.display = 'none';
-            } else {
-                alert('Sai mật khẩu. Vui lòng thử lại.');
+
+        async function getOrders() {
+            document.getElementById("loadingOverlay").style.display = "block";
+            const companySelect = document.getElementById("companySelect");
+            const selectedCompany = companySelect.value;
+            const orderProperties = document.getElementById("orderProperties").value;
+
+            const url = "https://api.viettelpost.vn/api/supperapp/get-list-order-by-status-v2";
+            const currentDate = new Date();
+            const thirtyDaysAgo = new Date(currentDate.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+            const tokenHCM = "eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOiIwOTE3NzE2ODE5IiwiU1NPSWQiOiI3ODU5YjAxYS0wZjlhLTQzZTgtODE2ZS02YzgzODQzNDRmZTciLCJpbnRlcm5hbCI6ZmFsc2UsIlVzZXJJZCI6NTU5NTUzMCwiRnJvbVNvdXJjZSI6MywiVG9rZW4iOiIzQTI4RkMwQkZCMERCOTE0NUI1MUQwQjZBNjVCNDJFOSIsInNlc3Npb25JZCI6IjkxMDBENDA4ODRCQjlDRTcyRDY4M0JBREZFNDBCNUFFIiwiZXhwIjoxNzIzMTgwODE0LCJsc3RDaGlsZHJlbiI6IiIsIlBhcnRuZXIiOjAsImRldmljZUlkIjoiMzVoZTR6ejM1ZWsyNno0Z2F0M2t5eiIsInZlcnNpb24iOjF9.koxRYefUbTluPOohiDnQWFKNxVrH5QzTB2A1LMK0t0cKaH5GsJq4wWjTlRbIGfZobUyiGJk-gPZTs0ai2pr8YA";
+            const tokenHCHCM = "eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOiIwOTE1NjY1NDIyIiwiU1NPSWQiOiI5ODkwOGMwZi1iNjZlLTQzMWYtYjllNy00MzA3YmM3YTA4MmQiLCJpbnRlcm5hbCI6ZmFsc2UsIlVzZXJJZCI6MTM3NzY4NDEsIkZyb21Tb3VyY2UiOjMsIlRva2VuIjoiMkVBMTY1MzEwRDdDMDQwQTYxQzhGRjIzMjFCNTgyMDUiLCJzZXNzaW9uSWQiOiJGOEY0NkM2MkVDRDNGMzBFRTdGQzBDQjJFM0MzMTk3QSIsImV4cCI6MTcyMzI1NDQwNywibHN0Q2hpbGRyZW4iOiIiLCJQYXJ0bmVyIjowLCJkZXZpY2VJZCI6ImdoaGJ6Yjdjb2tpcWNtNnlpZGJwbTkiLCJ2ZXJzaW9uIjoxfQ.knFW3VV1g1Eftc7wn04mbg52L9y8Cr2l59sjjEi4X3LIcJLA0W8maZ2KcYmDrbiNJjEhChBLCASpgzE1Gi_p9w";
+	    const tokenHN = "eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOiIwOTE1MjAyODE0IiwiU1NPSWQiOiJlZWEzMWY0Yi04NDI1LTRkYWItOTA2OS0yZTYxY2YzOTFlZjEiLCJpbnRlcm5hbCI6ZmFsc2UsIlVzZXJJZCI6NzY1Nzc4NCwiRnJvbVNvdXJjZSI6MywiVG9rZW4iOiIxMzgwRUUyQTM0MzE1RjZBMzIzOTAxNkE0NjZBMjY0NiIsInNlc3Npb25JZCI6IkY4NUE1MUIyNUU4MURENTk2M0EwQkI4RTg0NTlGQkQ0IiwiZXhwIjoxNzIyMjE4OTg5LCJsc3RDaGlsZHJlbiI6IiIsIlBhcnRuZXIiOjAsImRldmljZUlkIjoiZWhiN3g5bWVmODd1dDI4bTk5ZzlsIiwidmVyc2lvbiI6MX0.WNV72frfhlM2SkicJMVx1qFN2TuJ2KMs3V_z6k3gCEN70Pau-X3jlPgzdsEUE2U2TNAZdOGUhWPs1kPSpnhv6A";
+            const tokenHCHN = "eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOiIwOTE1NTA4MjM3IiwiU1NPSWQiOiI2MGQwOTZiNy04NGUyLTQ0MDQtOTkxOS0xNTk5ZTk1OWYxNDYiLCJpbnRlcm5hbCI6ZmFsc2UsIlVzZXJJZCI6MTM1MDY1NDksIkZyb21Tb3VyY2UiOjMsIlRva2VuIjoiNjQ3Q0Y5QjNDQzZDNEREODNGNTdEQUE4QUYzMzdGNzEiLCJzZXNzaW9uSWQiOiI5QTJDQ0Y4NjQxQUUzNERFODBBRTgzNTUwRUQ5NEI4OCIsImV4cCI6MTcyMjIxOTA1MSwibHN0Q2hpbGRyZW4iOiIiLCJQYXJ0bmVyIjowLCJkZXZpY2VJZCI6ImtnNjQ2bTQ1MzllamVtaHJuYWk1d2QiLCJ2ZXJzaW9uIjoxfQ.WEHBUMCOiZmfQoZI0DGUhUAnfZvXkJ_Iwz9hp-21-IxcKpP9WldoAIpz3yob3OPpeDxfwRd3AHwyNcEkABTj5g";
+		
+	const payload = {
+                "PAGE_INDEX": 1,
+                "PAGE_SIZE": 50,
+                "INVENTORY": null,
+                "TYPE": 0,
+                "DATE_FROM": thirtyDaysAgo.toLocaleDateString(),
+                "DATE_TO": currentDate.toLocaleDateString(),
+                "ORDER_PROPERTIES": orderProperties,
+                "ORDER_PAYMENT": "",
+                "IS_FAST_DELIVERY": false,
+                "REASON_RETURN": null,
+                "ORDER_STATUS": "-100,-101,-102,-108,-109,-110,100,102,103,104,105,107,200,201,202,300,301,302,303,320,400,500,501,502,503,504,505,506,507,508,509,515,550,551,570",
+                "deviceId": "qw81lo4qn2g97skob06tow"
+            };
+
+            const options = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Token": selectedCompany === "YMEDHCM" ? tokenHCM : 
+                 	(selectedCompany === "HEALTHCAREHCM" ? tokenHCHCM : 
+                 	(selectedCompany === "YMEDHN" ? tokenHN : 
+                 	(selectedCompany === "HEALTHCAREHN" ? tokenHCHN : null)))
+		},
+                body: JSON.stringify(payload)
+            };
+
+            const response = await fetch(url, options);
+            const data = await response.json();
+            const ordersDiv = document.getElementById('orders');
+            const orders = data?.data?.data?.LIST_ORDER;
+            const errorOders = data?.data.totalElements;
+            function getOrderStatusNumber(orderStatus) {
+                const statusStyleDict = {
+                    102: {text: 'Tồn lấy - Giao không thành công', color: 'red', backgroundColor: 'lightcoral', borderRadius: '25px'},
+                    103: {text: 'Đã tiếp nhận', color: '#FFFFFF', backgroundColor: '#1773DB', borderRadius: '25px'}, 
+                    104: {text: 'Đang lấy hàng', color: '#FFFFFF', backgroundColor: '#E0B85C', borderRadius: '25px'}, 
+                    107: {text: 'Đơn bị huỷ', color: 'red', backgroundColor: 'lightcoral', borderRadius: '25px'},
+                    200: {text: 'Đã lấy hàng', color: '#FFFFFF', backgroundColor: '#E0B85C', borderRadius: '25px'}, 
+                    202: {text: 'Đang vận chuyển', color: '#FFFFFF', backgroundColor: '#FC6140', borderRadius: '25px'}, 
+                    300: {text: 'Đang vận chuyển', color: '#FFFFFF', backgroundColor: '#FC6140', borderRadius: '25px'}, 
+                    400: {text: 'Đang vận chuyển', color: '#FFFFFF', backgroundColor: '#FC6140', borderRadius: '25px'},
+                    500: {text: 'Đang giao hàng', color: '#FFFFFF', backgroundColor: '#07C8D1', borderRadius: '25px'},  
+                    501: {text: 'Giao thành công', color: 'green', backgroundColor: 'lightgreen', borderRadius: '25px'}, 
+                    505: {text: 'Chờ xử lý', color: '#FFFFFF', backgroundColor: '#7986FF', borderRadius: '25px'},
+                    506: {text: 'Chờ phát lại', color: '#FFFFFF', backgroundColor: '#E43F99', borderRadius: '25px'}, 
+		    507: {text: 'Chờ xử lý', color: '#FFFFFF', backgroundColor: '#7986FF', borderRadius: '25px'},
+                    509: {text: 'Chờ phát lại', color: '#FFFFFF', backgroundColor: '#E43F99', borderRadius: '25px'},
+		    551: {text: 'Đang chuyển hoàn', color: '#FFFFFF', backgroundColor: '#7986FF', borderRadius: '25px'},
+                };
+                if (orderStatus in statusStyleDict) {
+                    const statusInfo = statusStyleDict[orderStatus];
+                    const textColor = statusInfo.color;
+                    const text = statusInfo.text;
+                    const backgroundColor = statusInfo.backgroundColor;
+                    const borderRadius = statusInfo.borderRadius;
+                    const padding = '5px 9px'; // Điều chỉnh padding để background lớn hơn chữ
+                    const statusTag = `<span style="color: ${textColor}; background-color: ${backgroundColor}; border-radius: ${borderRadius}; padding: ${padding};">${text}</span>`;
+                    return statusTag;
+                } else {
+                    const defaultBackgroundColor = 'lightgray'; // Màu nền mặc định
+                    const borderRadius = '25px'; // Border radius mặc định
+                    const padding = '5px 9px'; // Padding mặc định
+                    return `<span style="font-weight: bold; color: black; background-color: ${defaultBackgroundColor}; border-radius: ${borderRadius}; padding: ${padding};">Không xác định</span>`;
+                }
             }
+            
+            
+            
+            function formatDateTime(dateTimeString) {
+                const date = new Date(dateTimeString);
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const year = date.getFullYear();
+                const hours = date.getHours().toString().padStart(2, '0');
+                const minutes = date.getMinutes().toString().padStart(2, '0');
+                const seconds = date.getSeconds().toString().padStart(2, '0');
+                return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+            }
+
+            
+            
+            function formatMoney(money) {
+                return money.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+            
+            
+
+            if (orders) {
+                const rows = orders
+                    .map((order) => {
+                        document.getElementById("orders").style.display = "block";
+
+                        // Sử dụng hàm formatMoney để định dạng số
+                        const formattedMoneyCollection = formatMoney(order.MONEY_COLLECTION);
+                        // Định dạng tổng tiền
+                        const formattedMoneyTotal = formatMoney(order.MONEY_TOTAL);
+
+                        const percentage = (order.MONEY_TOTAL / order.MONEY_COLLECTION * 100).toFixed(2); // Lấy 2 số sau dấu phẩy
+
+                        return `<tr>
+                        <td class="text-center align-middle">${order.RN}</td>
+                        <td class="text-wrap text-left align-middle orderNum">${order.ORDER_NUMBER}</td>
+                        <td class="text-nowrap text-center align-middle">${getOrderStatusNumber(order.ORDER_STATUS)}</td>
+                        <td class="text-nowrap text-center align-middle">${formatDateTime(order.ORDER_SYSTEMDATE)}</td>
+                        <td class="text-wrap text-left align-middle">${order.ORDER_REFERENCE}</td>
+                        <td class="text-left align-middle">${order.RECEIVER_FULLNAME}</td>
+                        <td class="text-wrap">${order.RECEIVER_ADDRESS}</td>
+                        <td class="text-center align-middle">${order.RECEIVER_PHONE}</td>
+                        <td class="text-center align-middle">${formattedMoneyCollection}</td>
+                        <td class="text-center align-middle">${formattedMoneyTotal}</td>
+                        <td class="text-center align-middle">${percentage} %</td>
+                    </tr>`;
+                    })
+                    .join('');
+                document.getElementById('orderTableBody').innerHTML = rows;
+            } else {
+                
+                // Hiển thị phần tử 'orders' trước khi ghi đè nội dung
+                document.getElementById("orders").style.display = "block";
+                if (errorOders === 0) {
+                    // Sử dụng textContent hoặc innerHTML để cập nhật nội dung trực quan hơn
+                    ordersDiv.innerHTML = '<p>Không tìm thấy đơn hàng</p>';
+                }
+                    }
+            document.getElementById("loadingOverlay").style.display = "none";
         }
     </script>
 </body>
+<footer style="text-align: center; margin-top: 10px; color:#275284;">
+    <b>Đây chỉ là một web liên kết, không phải website chính thức</b>
+    <p>Tran Van Tien Anh ©</p>
+</footer>
 </html>
