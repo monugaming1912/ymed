@@ -133,7 +133,10 @@
     </div>
 
     <script>
-
+	let tokenHCM;
+	let tokenHCHCM;
+	
+	// Hàm để lấy token từ Google Sheets
 	async function getTokenFromSheet(cellRange) {
 	    const sheetId = '1-TwKcXRHdv7RtMkcIXNtIKusrz3p6AygPJeUwbamckA'; // ID Google Sheet của bạn
 	    const apiKey = 'AIzaSyBiwSUkIGpXx03T14SY3k2Cykys30QKoaE'; // API Key của bạn
@@ -147,14 +150,16 @@
 	
 	async function getOrders() {
 	    document.getElementById("loadingOverlay").style.display = "block";
-	    
-	    // Lấy token từ Google Sheet
-	    const tokenHCM = await getTokenFromSheet('A1'); // Lấy token từ ô A1
-	    const tokenHCHCM = await getTokenFromSheet('A2'); // Lấy token từ ô A2
-	    
+	
 	    const companySelect = document.getElementById("companySelect");
 	    const selectedCompany = companySelect.value;
 	    const orderProperties = document.getElementById("orderProperties").value;
+	
+	    // Chỉ lấy token khi cần
+	    if (!tokenHCM || !tokenHCHCM) {
+	        tokenHCM = await getTokenFromSheet('A1'); // Lấy token từ ô A1
+	        tokenHCHCM = await getTokenFromSheet('A2'); // Lấy token từ ô A2
+	    }
 	
 	    const url = "https://api.viettelpost.vn/api/supperapp/get-list-order-by-status-v2";
 	    const currentDate = new Date();
