@@ -791,10 +791,10 @@
         <input type="text" id="orderProperties" name="orderProperties" oninput="this.value = this.value.toUpperCase();">
 
         <select id="companySelect" onblur='this.size=0;' onchange='this.size=1; this.blur();'>
+            /* <option class="option" value="HEALTHCAREHCM">HEALTHCARE HCM</option> */
+            <option class="option" value="HEALTHCAREHN">HEALTHCARE HN</option>
             /* <option class="option" value="YMEDHCM">Y-MED HCM</option> */
-            <option class="option" value="HEALTHCAREHCM">HEALTHCARE HCM</option>
             /* <option class="option" value="YMEDHN">Y-MED HN</option> */
-            /* <option class="option" value="HEALTHCAREHN">HEALTHCARE HN</option> */
         </select>
 
         <button class="btn btn-primary" onclick="getOrders()">Lấy mã vận đơn</button>
@@ -837,7 +837,7 @@
     </div>
 
     <script>
-	let tokenHCM;
+	let tokenHCHN;
 	let tokenHCHCM;
 	
 	// Hàm để lấy token từ Google Sheets
@@ -862,16 +862,16 @@
 	        const orderProperties = document.getElementById("orderProperties").value;
 
 	        // Lấy token và gọi API như bình thường
-	        if (!tokenHCM || !tokenHCHCM) {
-	            tokenHCM = await getTokenFromSheet('A1');
-	            tokenHCHCM = await getTokenFromSheet('A2');
+	        if (!tokenHCHCM || !tokenHCHN) {
+	            tokenHCHCM = await getTokenFromSheet('A1');
+	            tokenHCHN = await getTokenFromSheet('A2');
 	        }
 
 	        const url = "https://api.viettelpost.vn/api/supperapp/get-list-order-by-status-v2";
 	        const currentDate = new Date();
 	        const thirtyDaysAgo = new Date(currentDate.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-	        const token = selectedCompany === "YMEDHCM" ? tokenHCM : tokenHCHCM;
+	        const token = selectedCompany === "HEALTHCAREHN" ? tokenHCHN : tokenHCHCM;
 
 	        const payload = {
 	            "PAGE_INDEX": 1,
