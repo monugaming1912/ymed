@@ -839,6 +839,7 @@
     <script>
 	let tokenHCHN;
 	let tokenHCHCM;
+	let tokenYMHN;
 	
 	// Hàm để lấy token từ Google Sheets
 	async function getTokenFromSheet(cellRange) {
@@ -862,16 +863,18 @@
 	        const orderProperties = document.getElementById("orderProperties").value;
 
 	        // Lấy token và gọi API như bình thường
-	        if (!tokenHCHCM || !tokenHCHN) {
+	        if (!tokenHCHCM || !tokenHCHN || !tokenYMHN) {
 	            tokenHCHCM = await getTokenFromSheet('A1');
 	            tokenHCHN = await getTokenFromSheet('A2');
+		    tokenYMHN = await getTokenFromSheet('A3');
 	        }
 
 	        const url = "https://api.viettelpost.vn/api/supperapp/get-list-order-by-status-v2";
 	        const currentDate = new Date();
 	        const thirtyDaysAgo = new Date(currentDate.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-	        const token = selectedCompany === "HEALTHCAREHN" ? tokenHCHN : tokenHCHCM;
+	       const token = selectedCompany === "HEALTHCAREHN" ? tokenHCHN  : selectedCompany === "HEALTHCAREHCM" ? tokenHCHCM : tokenYMHN;
+
 
 	        const payload = {
 	            "PAGE_INDEX": 1,
